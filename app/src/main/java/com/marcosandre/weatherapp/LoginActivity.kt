@@ -54,6 +54,7 @@ fun LoginPage(modifier: Modifier = Modifier) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val activity = LocalContext.current as Activity
+    // OBS.: no PDF tem LocalActivity.current, e não tava funcionando.
     Column(
         modifier = modifier.padding(16.dp).fillMaxSize(),
         verticalArrangement = Arrangement.Center,
