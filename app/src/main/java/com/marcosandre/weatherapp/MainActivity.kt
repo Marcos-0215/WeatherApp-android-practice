@@ -73,7 +73,6 @@ fun HomePage(modifier: Modifier = Modifier) {
         Spacer(modifier = modifier.size(24.dp))
 
         Button( onClick = {
-            Toast.makeText(activity, "Saiu com sucesso!", Toast.LENGTH_LONG).show()
             activity.finish()
         }
         ) {
