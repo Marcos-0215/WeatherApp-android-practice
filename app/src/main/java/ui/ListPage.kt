@@ -34,11 +34,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.marcosandre.weatherapp.model.City
+import com.marcosandre.weatherapp.viewmodel.MainViewModel
 
 
 @Preview(showBackground = true)
 @Composable
-fun ListPage(modifier: Modifier = Modifier) {
+fun ListPage(modifier: Modifier = Modifier,
+             viewModel: MainViewModel
+) {
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -57,7 +60,7 @@ fun ListPage(modifier: Modifier = Modifier) {
 
     }
 
-    val cityList = remember { getCities().toMutableStateList() }  // faz a lista ser reativa
+    val cityList = viewModel.cities                  // usar diretamente os dados que vêm do ViewModel
     val activity = LocalContext.current as Activity // Para os Toasts
     LazyColumn ( // cria a lista vertical
         modifier = modifier
@@ -66,10 +69,11 @@ fun ListPage(modifier: Modifier = Modifier) {
     ) {
         items(cityList, key = { it.name }) { city ->   // percorre cityList e exibe um CityItem para cada cidade
             CityItem(city = city, onClose = {
-                Toast.makeText(activity, "Fechou ${city.name}", Toast.LENGTH_LONG).show()
+                viewModel.remove(city)              // remove a cidade da lista interna (Jetpack Compose reage automaticamente)
+                Toast.makeText(activity, "Cidade removida: ${city.name}", Toast.LENGTH_LONG).show()
 
             }, onClick = {
-                Toast.makeText(activity, "Clicou em ${city.name}", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Voce clicou em ${city.name}", Toast.LENGTH_LONG).show()
             })
         }
     }
@@ -77,10 +81,6 @@ fun ListPage(modifier: Modifier = Modifier) {
 
 }
 
-// Gera uma lista fake de cidades, útil pra testar
-private fun getCities() = List(20) { i ->
-    City(name = "Cidade $i", weather = "Carregando clima...")
-}
 
 
 @Composable
