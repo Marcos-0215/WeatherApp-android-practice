@@ -2,6 +2,7 @@ package com.marcosandre.weatherapp.viewmodel
 
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.maps.model.LatLng
 import com.marcosandre.weatherapp.model.City
 
 class MainViewModel : ViewModel() {   // cria classe que herda de ViewModel e gerencia dados da tela
@@ -12,8 +13,8 @@ class MainViewModel : ViewModel() {   // cria classe que herda de ViewModel e ge
     fun remove(city: City) {                                // remove uma cidade específica
         _cities.remove(city)
     }
-    fun add(name: String) {                                 // adiciona uma nova cidade
-        _cities.add(City(name = name))
+    fun add(name: String, location: LatLng? = null) {                                 // adiciona uma nova cidade
+        _cities.add(City(name = name, location = location))
     }
 
 
