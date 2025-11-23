@@ -43,23 +43,6 @@ fun ListPage(modifier: Modifier = Modifier,
              viewModel: MainViewModel
 ) {
 
-    Column(
-        modifier = modifier.fillMaxSize()
-            .background(Color.Magenta)
-            .wrapContentSize(Alignment.Center)
-
-    ) {
-        Text(
-            text = "Favoritas",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = modifier.align(CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
-
-    }
-
     val cityList = viewModel.cities                  // usar diretamente os dados que vêm do ViewModel
     val activity = LocalContext.current as Activity // Para os Toasts
     LazyColumn ( // cria a lista vertical
