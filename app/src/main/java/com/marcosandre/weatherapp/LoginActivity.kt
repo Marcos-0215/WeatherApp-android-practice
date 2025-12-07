@@ -97,10 +97,14 @@ fun LoginPage(modifier: Modifier = Modifier) {
                     .addOnCompleteListener(activity) { task ->
                         if (task.isSuccessful) {
                             // login bem-sucedido
+                            // REMOVIDO PRATICA 05, PARTE 3, PASSO 4
+                            /*
                             activity.startActivity(
                                 Intent(activity, MainActivity::class.java)
                                     .setFlags(FLAG_ACTIVITY_SINGLE_TOP)
                             )
+                            */
+
                             Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
                         } else {
                             // falha no login

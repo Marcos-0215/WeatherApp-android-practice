@@ -130,7 +130,7 @@ fun RegisterPage(modifier: Modifier = Modifier) {
                     .addOnCompleteListener(activity) { task ->
                         if (task.isSuccessful) {
                             Toast.makeText(activity, "Registro OK!", Toast.LENGTH_LONG).show()
-                            activity.finish()  // usuário já está logado automaticamente
+                            //activity.finish()  // usuário já está logado automaticamente
                         } else {
                             Toast.makeText(activity, "Registro FALHOU!", Toast.LENGTH_LONG).show()
                         }
