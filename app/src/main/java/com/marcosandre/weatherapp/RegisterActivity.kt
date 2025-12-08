@@ -36,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.marcosandre.weatherapp.db.fb.FBDatabase
+import com.marcosandre.weatherapp.db.fb.toFBUser
+import com.marcosandre.weatherapp.model.User
 import com.marcosandre.weatherapp.ui.theme.WeatherAppTheme
 
 class RegisterActivity : ComponentActivity() {
@@ -131,6 +134,8 @@ fun RegisterPage(modifier: Modifier = Modifier) {
                         if (task.isSuccessful) {
                             Toast.makeText(activity, "Registro OK!", Toast.LENGTH_LONG).show()
                             //activity.finish()  // usuário já está logado automaticamente
+                            FBDatabase().register(User(name, email).toFBUser())
+
                         } else {
                             Toast.makeText(activity, "Registro FALHOU!", Toast.LENGTH_LONG).show()
                         }

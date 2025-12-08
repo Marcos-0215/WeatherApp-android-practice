@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.marcosandre.weatherapp.ui.theme.WeatherAppTheme
@@ -33,6 +34,8 @@ import ui.nav.Route
 import androidx.navigation.NavDestination.Companion.hasRoute
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.marcosandre.weatherapp.db.fb.FBDatabase
+import com.marcosandre.weatherapp.viewmodel.MainViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -41,7 +44,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val viewModel : MainViewModel by viewModels()
+            // Pratica 6, parte 3, passo 3
+
+            // Instância única do FBDatabase durante toda a composição
+            val fbDB = remember { FBDatabase() }
+
+            // ViewModel usando a factory
+            val viewModel: MainViewModel = viewModel(
+                factory = MainViewModelFactory(fbDB)
+            )
+
+            ////////////////
+
+            //val viewModel : MainViewModel by viewModels() // Versão ANTERIOR, até prática 6, parte 3.
             val navController = rememberNavController()
             var showDialog by remember { mutableStateOf(false) }
 
