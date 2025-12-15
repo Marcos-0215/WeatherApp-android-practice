@@ -6,6 +6,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.model.LatLng
+import com.marcosandre.weatherapp.api.WeatherService
 import com.marcosandre.weatherapp.db.fb.FBCity
 import com.marcosandre.weatherapp.db.fb.FBDatabase
 import com.marcosandre.weatherapp.db.fb.FBUser
@@ -14,7 +15,8 @@ import com.marcosandre.weatherapp.model.City
 import com.marcosandre.weatherapp.model.User
 
 class MainViewModel(
-    private val db: FBDatabase
+    private val db: FBDatabase,
+    private val service: WeatherService
 ) : ViewModel(), FBDatabase.Listener {
 
 
@@ -33,11 +35,41 @@ class MainViewModel(
     }
 
     // Chamado pela UI (ex: ao clicar em Add City)
+    // OBSOLETO PELOS NOVOS MÉTODOS USANDO API
+    /*
     fun add(name: String, location: LatLng? = null) {
         db.add(
             City(name = name, location = location).toFBCity()
         )
     }
+    */
+
+    fun addCity(name: String) {
+        service.getLocation(name) { lat, lng ->
+            if (lat != null && lng != null) {
+                db.add(
+                    City(
+                        name = name,
+                        location = LatLng(lat, lng)
+                    ).toFBCity()
+                )
+            }
+        }
+    }
+
+    fun addCity(location: LatLng) {
+        service.getName(location.latitude, location.longitude) { name ->
+            if (name != null) {
+                db.add(
+                    City(
+                        name = name,
+                        location = location
+                    ).toFBCity()
+                )
+            }
+        }
+    }
+
 
     fun remove(city: City) {
         db.remove(
@@ -71,13 +103,14 @@ class MainViewModel(
 }
 
 class MainViewModelFactory(
-    private val db: FBDatabase
+    private val db: FBDatabase,
+    private val service: WeatherService
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
 
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(db) as T
+            return MainViewModel(db, service) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel class")

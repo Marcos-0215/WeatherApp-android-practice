@@ -44,8 +44,7 @@ fun MapPage(modifier: Modifier = Modifier,
 
     GoogleMap (modifier = Modifier.fillMaxSize(),
             onMapClick = {
-                viewModel.add(
-                    "Cidade@${it.latitude}:${it.longitude}",
+                viewModel.addCity(
                     location = it
                 )
             },

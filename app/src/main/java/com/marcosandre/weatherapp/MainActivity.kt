@@ -33,6 +33,7 @@ import com.marcosandre.weatherapp.ui.nav.Route
 import androidx.navigation.NavDestination.Companion.hasRoute
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.marcosandre.weatherapp.api.WeatherService
 import com.marcosandre.weatherapp.db.fb.FBDatabase
 import com.marcosandre.weatherapp.viewmodel.MainViewModelFactory
 
@@ -45,12 +46,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             // Pratica 6, parte 3, passo 3
 
-            // Instância única do FBDatabase durante toda a composição
+            // Instância única do FBDatabase e WeatherService durante toda a composição
             val fbDB = remember { FBDatabase() }
+            val weatherService = remember { WeatherService() }
 
             // ViewModel usando a factory
             val viewModel: MainViewModel = viewModel(
-                factory = MainViewModelFactory(fbDB)
+                factory = MainViewModelFactory(fbDB, weatherService)
             )
 
             ////////////////
@@ -71,7 +73,7 @@ class MainActivity : ComponentActivity() {
                     CityDialog(
                         onDismiss = { showDialog = false },
                         onConfirm = { city ->
-                            if (city.isNotBlank()) viewModel.add(city)
+                            if (city.isNotBlank()) viewModel.addCity(city)
                             showDialog = false
                         }
                     )
