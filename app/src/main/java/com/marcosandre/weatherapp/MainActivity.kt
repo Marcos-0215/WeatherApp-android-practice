@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -26,11 +25,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.marcosandre.weatherapp.ui.theme.WeatherAppTheme
 import com.marcosandre.weatherapp.viewmodel.MainViewModel
-import ui.CityDialog
-import ui.nav.BottomNavBar
-import ui.nav.BottomNavItem
-import ui.nav.MainNavHost
-import ui.nav.Route
+import com.marcosandre.weatherapp.ui.CityDialog
+import com.marcosandre.weatherapp.ui.nav.BottomNavBar
+import com.marcosandre.weatherapp.ui.nav.BottomNavItem
+import com.marcosandre.weatherapp.ui.nav.MainNavHost
+import com.marcosandre.weatherapp.ui.nav.Route
 import androidx.navigation.NavDestination.Companion.hasRoute
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth

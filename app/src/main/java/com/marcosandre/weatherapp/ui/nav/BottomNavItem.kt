@@ -1,4 +1,4 @@
-package ui.nav
+package com.marcosandre.weatherapp.ui.nav
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite

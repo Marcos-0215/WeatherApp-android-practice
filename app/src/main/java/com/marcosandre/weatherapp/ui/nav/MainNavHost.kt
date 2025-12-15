@@ -1,13 +1,13 @@
-package ui.nav
+package com.marcosandre.weatherapp.ui.nav
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.marcosandre.weatherapp.ui.HomePage
+import com.marcosandre.weatherapp.ui.ListPage
 import com.marcosandre.weatherapp.viewmodel.MainViewModel
-import ui.HomePage
-import ui.ListPage
-import ui.MapPage
+import com.marcosandre.weatherapp.ui.MapPage
 
 @Composable
 fun MainNavHost(navController: NavHostController,
