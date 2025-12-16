@@ -22,9 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.marcosandre.weatherapp.R
 import com.marcosandre.weatherapp.model.City
 import com.marcosandre.weatherapp.model.Weather
 import com.marcosandre.weatherapp.ui.nav.Route
@@ -83,10 +86,22 @@ fun CityItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Ícone à esquerda
+        // OBSOLETO NA PRÁTICA 09
+        /*
         Icon(
             Icons.Rounded.FavoriteBorder,
             contentDescription = ""
         )
+         */
+
+        // 🔥 IMAGEM DO CLIMA (AsyncImage)
+        AsyncImage(
+            model = weather.imgUrl,
+            modifier = Modifier.size(75.dp),
+            error = painterResource(id = R.drawable.loading),
+            contentDescription = "Imagem do clima"
+        )
+
         Spacer(modifier = Modifier.size(12.dp))
 
         // Nome e Clima

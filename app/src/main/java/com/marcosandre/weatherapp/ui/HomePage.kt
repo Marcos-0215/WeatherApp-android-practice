@@ -18,11 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.marcosandre.weatherapp.R
 import com.marcosandre.weatherapp.viewmodel.MainViewModel
 
 //@Preview(showBackground = true)
@@ -66,10 +69,21 @@ fun HomePage(
             // Cidade selecionada
             Row {
 
+                // OBSOLETO na prática 09
+                /*
                 Icon(
                     imageVector = Icons.Filled.AccountBox,
                     contentDescription = null,
                     modifier = Modifier.size(150.dp)
+                )
+                 */
+
+                // IMAGEM DO CLIMA (AsyncImage)
+                AsyncImage(
+                    model = viewModel.weather(viewModel.city!!).imgUrl,
+                    modifier = Modifier.size(140.dp),
+                    error = painterResource(id = R.drawable.loading),
+                    contentDescription = "Imagem do clima"
                 )
 
                 Column {
