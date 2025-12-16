@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.marcosandre.weatherapp.model.City
+import com.marcosandre.weatherapp.model.Weather
 import com.marcosandre.weatherapp.viewmodel.MainViewModel
 
 
@@ -43,7 +44,9 @@ fun ListPage(modifier: Modifier = Modifier,
             .padding(8.dp)
     ) {
         items(cityList, key = { it.name }) { city ->   // percorre cityList e exibe um CityItem para cada cidade
-            CityItem(city = city, onClose = {
+            CityItem(city = city,
+                weather = viewModel.weather(city.name),
+                onClose = {
                 viewModel.remove(city)              // remove a cidade da lista interna (Jetpack Compose reage automaticamente)
                 Toast.makeText(activity, "Cidade removida: ${city.name}", Toast.LENGTH_LONG).show()
 
@@ -61,10 +64,15 @@ fun ListPage(modifier: Modifier = Modifier,
 @Composable
 fun CityItem(
     city: City,                     // A cidade que será exibida
+    weather: Weather,
     onClick: () -> Unit,            // O que fazer a clicar no item
     onClose: () -> Unit,            // O que fazer ao clicar no botão X
     modifier: Modifier = Modifier   // permite aplicar modificações (padding, alinhamento, etc)
 ) {
+    val desc =
+        if (weather == Weather.LOADING) "Carregando clima..."
+        else weather.desc
+
     Row(
         modifier = modifier.fillMaxWidth().padding(8.dp).clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
@@ -82,7 +90,8 @@ fun CityItem(
                 text = city.name,
                 fontSize = 24.sp)
             Text(modifier = Modifier,
-                text = city.weather?:"Carregando clima...",
+                //text = city.weather?:"Carregando clima...",
+                text = desc,
                 fontSize = 16.sp)
 
         }

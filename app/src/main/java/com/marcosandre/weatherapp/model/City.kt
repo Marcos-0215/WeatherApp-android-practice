@@ -4,7 +4,8 @@ import com.google.android.gms.maps.model.LatLng
 
 data class City(
     val name : String,
-    val weather: String? = null,
+    //val weather: String? = null,
+    // Removido na pratica 08
     val location: LatLng? = null
 
 )

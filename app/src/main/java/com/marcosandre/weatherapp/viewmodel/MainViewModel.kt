@@ -1,27 +1,40 @@
 package com.marcosandre.weatherapp.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.model.LatLng
 import com.marcosandre.weatherapp.api.WeatherService
+import com.marcosandre.weatherapp.api.toWeather
 import com.marcosandre.weatherapp.db.fb.FBCity
 import com.marcosandre.weatherapp.db.fb.FBDatabase
 import com.marcosandre.weatherapp.db.fb.FBUser
 import com.marcosandre.weatherapp.db.fb.toFBCity
 import com.marcosandre.weatherapp.model.City
 import com.marcosandre.weatherapp.model.User
+import com.marcosandre.weatherapp.model.Weather
 
 class MainViewModel(
     private val db: FBDatabase,
     private val service: WeatherService
 ) : ViewModel(), FBDatabase.Listener {
 
+    // ATUALIZADO na pratica 08
+    //private val _cities = mutableStateListOf<City>()
+    private val _cities = mutableStateMapOf<String, City>()
 
-    private val _cities = mutableStateListOf<City>()
-    val cities get() = _cities.toList()
+    // ATUALIZADO na pratica 08
+    //val cities get() = _cities.toList()
+    val cities: List<City>
+        get() = _cities.values
+            .toList()
+            .sortedBy { it.name }
+
+    private val _weather = mutableStateMapOf<String, Weather>()
+
 
     // NOVO (Passo 2 da Parte 2)
     private val _user = mutableStateOf<User?>(null)
@@ -87,16 +100,45 @@ class MainViewModel(
         //TODO("Not yet implemented")
     }
 
+    /*
     override fun onCityAdded(city: FBCity) {
         _cities.add(city.toCity())
     }
-
-    override fun onCityUpdated(city: FBCity) {
-        //TODO("Not yet implemented")
+    */
+    override fun onCityAdded(city: FBCity) {
+        _cities[city.name!!] = city.toCity()
     }
 
+
+    override fun onCityUpdated(city: FBCity) {
+
+        _cities.remove(city.name)
+        _cities[city.name!!] = city.toCity()
+    }
+
+    /*
     override fun onCityRemoved(city: FBCity) {
         _cities.remove(city.toCity())
+    }
+    */
+    override fun onCityRemoved(city: FBCity) {
+        _cities.remove(city.name)
+    }
+
+
+    fun weather(name: String) =
+        _weather.getOrPut(name) {
+            loadWeather(name)
+            Weather.LOADING
+        }
+
+
+    private fun loadWeather(name: String) {
+        service.getWeather(name) { apiWeather ->
+            apiWeather?.let {
+                _weather[name] = apiWeather.toWeather()  // Converte a resposta para o objeto Weather e armazena no map
+            }
+        }
     }
 
 
