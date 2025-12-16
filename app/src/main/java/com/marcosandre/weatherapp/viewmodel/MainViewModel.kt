@@ -1,5 +1,6 @@
 package com.marcosandre.weatherapp.viewmodel
 
+import androidx.browser.browseractions.BrowserServiceFileProvider.loadBitmap
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -155,6 +156,7 @@ class MainViewModel(
         service.getWeather(name) { apiWeather ->
             apiWeather?.let {
                 _weather[name] = apiWeather.toWeather()  // Converte a resposta para o objeto Weather e armazena no map
+                loadBitmap(name) // Pratica 09
             }
         }
     }
@@ -173,7 +175,13 @@ class MainViewModel(
         }
     }
 
-
+    fun loadBitmap(name: String) {
+        _weather[name]?.let { weather ->
+            service.getBitmap(weather.imgUrl) { bitmap ->
+                _weather[name] = weather.copy(bitmap = bitmap)
+            }
+        }
+    }
 
 }
 

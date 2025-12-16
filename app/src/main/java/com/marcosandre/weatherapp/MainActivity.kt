@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
             // Instância única do FBDatabase e WeatherService durante toda a composição
             val fbDB = remember { FBDatabase() }
-            val weatherService = remember { WeatherService() }
+            val weatherService = remember { WeatherService(this) }
 
             // ViewModel usando a factory
             val viewModel: MainViewModel = viewModel(
