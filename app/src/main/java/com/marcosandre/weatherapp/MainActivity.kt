@@ -112,7 +112,9 @@ class MainActivity : ComponentActivity() {
 
                             )
 
-                        BottomNavBar(navController = navController, items)
+                        // MUDANÇA na prática 08
+                        //BottomNavBar(navController = navController, items)
+                        BottomNavBar(viewModel, items)
 
                     },
 
@@ -130,6 +132,21 @@ class MainActivity : ComponentActivity() {
                         MainNavHost(navController = navController,
                             viewModel = viewModel)
                     }
+
+                    LaunchedEffect(viewModel.page) {
+                        navController.navigate(viewModel.page) {
+                            // Volta pilha de navegação até HomePage (startDest)
+                            navController.graph.startDestinationRoute?.let {
+                                popUpTo(it) {
+                                    saveState = true
+                                }
+                                restoreState = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+
+
                 }
             }
         }

@@ -18,6 +18,7 @@ import com.marcosandre.weatherapp.model.City
 import com.marcosandre.weatherapp.model.Forecast
 import com.marcosandre.weatherapp.model.User
 import com.marcosandre.weatherapp.model.Weather
+import com.marcosandre.weatherapp.ui.nav.Route
 
 class MainViewModel(
     private val db: FBDatabase,
@@ -51,6 +52,13 @@ class MainViewModel(
         set(tmp) {
             _city.value = tmp
         }
+
+    private var _page = mutableStateOf<Route>(Route.Home)
+
+    var page: Route
+        get() = _page.value
+        set(tmp) { _page.value = tmp }
+
 
     init {
         // Muito importante: ViewModel agora escuta o Firebase

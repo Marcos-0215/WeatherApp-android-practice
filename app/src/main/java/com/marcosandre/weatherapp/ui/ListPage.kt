@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.marcosandre.weatherapp.model.City
 import com.marcosandre.weatherapp.model.Weather
+import com.marcosandre.weatherapp.ui.nav.Route
 import com.marcosandre.weatherapp.viewmodel.MainViewModel
 
 
@@ -53,6 +54,9 @@ fun ListPage(modifier: Modifier = Modifier,
             }, onClick = {
                 Toast.makeText(activity, "Voce clicou em ${city.name}", Toast.LENGTH_LONG).show()
                     viewModel.city = city.name
+
+                    // Muda a página atual para "Home"
+                    viewModel.page = Route.Home
             })
         }
     }
