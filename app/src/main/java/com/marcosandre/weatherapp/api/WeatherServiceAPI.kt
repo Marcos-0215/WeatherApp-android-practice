@@ -25,4 +25,8 @@ interface WeatherServiceAPI {
         @Query("q") query: String
     ): Call<APICurrentWeather?>
 
+    @GET("forecast.json?key=$API_KEY&days=10&lang=pt")
+    fun forecast(@Query("q") name: String): Call<APIWeatherForecast?>
+
+
 }

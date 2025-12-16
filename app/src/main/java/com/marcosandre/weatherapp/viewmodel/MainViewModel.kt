@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.model.LatLng
 import com.marcosandre.weatherapp.api.WeatherService
+import com.marcosandre.weatherapp.api.toForecast
 import com.marcosandre.weatherapp.api.toWeather
 import com.marcosandre.weatherapp.db.fb.FBCity
 import com.marcosandre.weatherapp.db.fb.FBDatabase
 import com.marcosandre.weatherapp.db.fb.FBUser
 import com.marcosandre.weatherapp.db.fb.toFBCity
 import com.marcosandre.weatherapp.model.City
+import com.marcosandre.weatherapp.model.Forecast
 import com.marcosandre.weatherapp.model.User
 import com.marcosandre.weatherapp.model.Weather
 
@@ -34,13 +36,21 @@ class MainViewModel(
             .sortedBy { it.name }
 
     private val _weather = mutableStateMapOf<String, Weather>()
-
+    private val _forecast = mutableStateMapOf<String, List<Forecast>?>()
 
     // NOVO (Passo 2 da Parte 2)
     private val _user = mutableStateOf<User?>(null)
     val user: User?
         get() = _user.value
     // ------------------------------
+
+    private val _city = mutableStateOf<String?>(null)
+
+    var city: String?
+        get() = _city.value
+        set(tmp) {
+            _city.value = tmp
+        }
 
     init {
         // Muito importante: ViewModel agora escuta o Firebase
@@ -140,6 +150,21 @@ class MainViewModel(
             }
         }
     }
+
+    fun forecast(name: String) =
+        _forecast.getOrPut(name) {
+            loadForecast(name)
+            emptyList()   // valor retornado imediatamente
+        }
+
+    private fun loadForecast(name: String) {
+        service.getForecast(name) { apiForecast ->
+            apiForecast?.let {
+                _forecast[name] = apiForecast.toForecast()
+            }
+        }
+    }
+
 
 
 }

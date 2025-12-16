@@ -52,6 +52,7 @@ fun ListPage(modifier: Modifier = Modifier,
 
             }, onClick = {
                 Toast.makeText(activity, "Voce clicou em ${city.name}", Toast.LENGTH_LONG).show()
+                    viewModel.city = city.name
             })
         }
     }
