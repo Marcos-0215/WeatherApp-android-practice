@@ -20,13 +20,18 @@ import com.marcosandre.weatherapp.model.Forecast
 import com.marcosandre.weatherapp.model.User
 import com.marcosandre.weatherapp.model.Weather
 import com.marcosandre.weatherapp.monitor.ForecastMonitor
+import com.marcosandre.weatherapp.repo.Repository
 import com.marcosandre.weatherapp.ui.nav.Route
 
 class MainViewModel(
-    private val db: FBDatabase,
+    //private val db: FBDatabase,
+    private val repo: Repository, // Pratica 11
     private val service: WeatherService,
     private val monitor: ForecastMonitor   // Pratica 10
-) : ViewModel(), FBDatabase.Listener {
+)
+    //: ViewModel(), FBDatabase.Listener
+    : ViewModel(), Repository.Listener
+{
 
     // ATUALIZADO na pratica 08
     //private val _cities = mutableStateListOf<City>()
@@ -69,8 +74,9 @@ class MainViewModel(
 
 
     init {
-        // Muito importante: ViewModel agora escuta o Firebase
-        db.setListener(this)
+        // [DEFASADO] Muito importante: ViewModel agora escuta o Firebase
+        // Pratica 11: Viewmodel escuta o Repositorio
+        repo.setListener(this)
     }
 
     // Chamado pela UI (ex: ao clicar em Add City)
@@ -86,11 +92,11 @@ class MainViewModel(
     fun addCity(name: String) {
         service.getLocation(name) { lat, lng ->
             if (lat != null && lng != null) {
-                db.add(
+                repo.add(
                     City(
                         name = name,
                         location = LatLng(lat, lng)
-                    ).toFBCity()
+                    )
                 )
             }
         }
@@ -99,11 +105,11 @@ class MainViewModel(
     fun addCity(location: LatLng) {
         service.getName(location.latitude, location.longitude) { name ->
             if (name != null) {
-                db.add(
+                repo.add(
                     City(
                         name = name,
                         location = location
-                    ).toFBCity()
+                    )
                 )
             }
         }
@@ -111,15 +117,13 @@ class MainViewModel(
 
 
     fun remove(city: City) {
-        db.remove(
-            city.toFBCity()
-        )
+        repo.remove(city)
     }
 
     // Implementação dos callbacks do Firebase
 
-    override fun onUserLoaded(user: FBUser) {
-        _user.value = user.toUser()
+    override fun onUserLoaded(user: User) {
+        _user.value = user
     }
 
     override fun onUserSignOut() {
@@ -135,21 +139,20 @@ class MainViewModel(
         _cities.add(city.toCity())
     }
     */
-    override fun onCityAdded(city: FBCity) {
-        val modelCity = city.toCity()
-        _cities[city.name!!] = modelCity
-
-        monitor.updateCity(modelCity)
+    override fun onCityAdded(city: City) {
+        //val modelCity = city.toCity()
+        _cities[city.name] = city
+        monitor.updateCity(city)
     }
 
 
-    override fun onCityUpdated(city: FBCity) {
-        val modelCity = city.toCity()
+    override fun onCityUpdated(city: City) {
+        //val modelCity = city.toCity()
 
-        _cities.remove(city.name)
-        _cities[city.name!!] = modelCity
+        //_cities.remove(city.name)
+        _cities[city.name] = city
 
-        monitor.updateCity(modelCity)
+        monitor.updateCity(city)
     }
 
     /*
@@ -157,10 +160,10 @@ class MainViewModel(
         _cities.remove(city.toCity())
     }
     */
-    override fun onCityRemoved(city: FBCity) {
-        val modelCity = city.toCity()
+    override fun onCityRemoved(city: City) {
+        //val modelCity = city.toCity()
         _cities.remove(city.name)
-        monitor.cancelCity(modelCity)
+        monitor.cancelCity(city)
     }
 
 
@@ -189,7 +192,8 @@ class MainViewModel(
     private fun loadForecast(name: String) {
         service.getForecast(name) { apiForecast ->
             apiForecast?.let {
-                _forecast[name] = apiForecast.toForecast()
+                //_forecast[name] = apiForecast.toForecast()
+                _forecast[name] = it.toForecast() // pratica 11
             }
         }
     }
@@ -203,14 +207,15 @@ class MainViewModel(
     }
 
     fun update(city: City) {
-        db.update(city.toFBCity())
+        repo.update(city)
     }
 
 
 }
 
 class MainViewModelFactory(
-    private val db: FBDatabase,
+    //private val db: FBDatabase,
+    private val repo: Repository, // Pratica 11
     private val service: WeatherService,
     private val monitor: ForecastMonitor   // Pratica 10
 ) : ViewModelProvider.Factory {
@@ -218,7 +223,7 @@ class MainViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
 
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(db, service, monitor) as T
+            return MainViewModel(repo, service, monitor) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel class")

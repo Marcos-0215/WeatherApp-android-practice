@@ -39,7 +39,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.marcosandre.weatherapp.api.WeatherService
 import com.marcosandre.weatherapp.db.fb.FBDatabase
+import com.marcosandre.weatherapp.db.local.LocalDatabase
 import com.marcosandre.weatherapp.monitor.ForecastMonitor
+import com.marcosandre.weatherapp.repo.Repository
 import com.marcosandre.weatherapp.viewmodel.MainViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +60,24 @@ class MainActivity : ComponentActivity() {
             // Pratica 10
             val forecastMonitor = remember { ForecastMonitor(this) }
 
+            // Pratica 11
+            val uid = Firebase.auth.currentUser?.uid ?: "anonymous"
+
+            val localDB = remember(uid) {
+                LocalDatabase(
+                    context = this,
+                    databaseName = "weatherapp_$uid.db"
+                )
+            }
+
+            val repository = remember {
+                Repository(
+                    fbDB = fbDB,
+                    localDB = localDB
+                )
+            }
+
+
 
             /*
             // ViewModel usando a factory
@@ -69,7 +89,8 @@ class MainActivity : ComponentActivity() {
             // Pratica 10
             val viewModel: MainViewModel = viewModel(
                 factory = MainViewModelFactory(
-                    fbDB,
+                    // fbDB,
+                    repository, // Pratica 11
                     weatherService,
                     forecastMonitor
                 )
