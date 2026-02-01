@@ -19,11 +19,13 @@ import com.marcosandre.weatherapp.model.City
 import com.marcosandre.weatherapp.model.Forecast
 import com.marcosandre.weatherapp.model.User
 import com.marcosandre.weatherapp.model.Weather
+import com.marcosandre.weatherapp.monitor.ForecastMonitor
 import com.marcosandre.weatherapp.ui.nav.Route
 
 class MainViewModel(
     private val db: FBDatabase,
-    private val service: WeatherService
+    private val service: WeatherService,
+    private val monitor: ForecastMonitor   // Pratica 10
 ) : ViewModel(), FBDatabase.Listener {
 
     // ATUALIZADO na pratica 08
@@ -121,7 +123,11 @@ class MainViewModel(
     }
 
     override fun onUserSignOut() {
-        //TODO("Not yet implemented")
+        monitor.cancelAll()
+        _cities.clear()
+        _weather.clear()
+        _forecast.clear()
+        _city.value = null
     }
 
     /*
@@ -130,14 +136,20 @@ class MainViewModel(
     }
     */
     override fun onCityAdded(city: FBCity) {
-        _cities[city.name!!] = city.toCity()
+        val modelCity = city.toCity()
+        _cities[city.name!!] = modelCity
+
+        monitor.updateCity(modelCity)
     }
 
 
     override fun onCityUpdated(city: FBCity) {
+        val modelCity = city.toCity()
 
         _cities.remove(city.name)
-        _cities[city.name!!] = city.toCity()
+        _cities[city.name!!] = modelCity
+
+        monitor.updateCity(modelCity)
     }
 
     /*
@@ -146,7 +158,9 @@ class MainViewModel(
     }
     */
     override fun onCityRemoved(city: FBCity) {
+        val modelCity = city.toCity()
         _cities.remove(city.name)
+        monitor.cancelCity(modelCity)
     }
 
 
@@ -197,13 +211,14 @@ class MainViewModel(
 
 class MainViewModelFactory(
     private val db: FBDatabase,
-    private val service: WeatherService
+    private val service: WeatherService,
+    private val monitor: ForecastMonitor   // Pratica 10
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
 
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(db, service) as T
+            return MainViewModel(db, service, monitor) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel class")

@@ -1,5 +1,8 @@
 package com.marcosandre.weatherapp
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.core.util.Consumer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -35,6 +39,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.marcosandre.weatherapp.api.WeatherService
 import com.marcosandre.weatherapp.db.fb.FBDatabase
+import com.marcosandre.weatherapp.monitor.ForecastMonitor
 import com.marcosandre.weatherapp.viewmodel.MainViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,13 +55,54 @@ class MainActivity : ComponentActivity() {
             val fbDB = remember { FBDatabase() }
             val weatherService = remember { WeatherService(this) }
 
+            // Pratica 10
+            val forecastMonitor = remember { ForecastMonitor(this) }
+
+
+            /*
             // ViewModel usando a factory
             val viewModel: MainViewModel = viewModel(
                 factory = MainViewModelFactory(fbDB, weatherService)
             )
+            */
+
+            // Pratica 10
+            val viewModel: MainViewModel = viewModel(
+                factory = MainViewModelFactory(
+                    fbDB,
+                    weatherService,
+                    forecastMonitor
+                )
+            )
+
+            DisposableEffect(Unit) {
+
+                val listener = Consumer<Intent> { intent ->
+                    viewModel.city = intent.getStringExtra("city")
+                    viewModel.page = Route.Home
+                }
+
+                addOnNewIntentListener(listener)
+
+                onDispose {
+                    removeOnNewIntentListener(listener)
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                    requestPermissions(
+                        arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                        1001
+                    )
+                }
+            }
+
+
 
             ////////////////
-
             //val viewModel : MainViewModel by viewModels() // Versão ANTERIOR, até prática 6, parte 3.
             val navController = rememberNavController()
             var showDialog by remember { mutableStateOf(false) }
