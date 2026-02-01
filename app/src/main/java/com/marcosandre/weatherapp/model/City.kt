@@ -6,6 +6,7 @@ data class City(
     val name : String,
     //val weather: String? = null,
     // Removido na pratica 08
-    val location: LatLng? = null
+    val location: LatLng? = null,
+    val isMonitored: Boolean = false
 
 )

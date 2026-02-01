@@ -1,6 +1,7 @@
 package com.marcosandre.weatherapp.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,6 +69,14 @@ fun HomePage(
 
         } else {
 
+            val city = viewModel.city?.let { viewModel.cityMap[it] }
+
+            val icon = if (city?.isMonitored == true)
+                Icons.Filled.Notifications
+            else
+                Icons.Outlined.Notifications
+
+
             // Cidade selecionada
             Row {
 
@@ -93,6 +104,20 @@ fun HomePage(
                     Text(
                         text = viewModel.city ?: "Selecione uma cidade...",
                         fontSize = 28.sp
+                    )
+
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "Monitorada?",
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable {
+                                city?.let {
+                                    viewModel.update(
+                                        city = it.copy(isMonitored = !it.isMonitored)
+                                    )
+                                }
+                            }
                     )
 
                     viewModel.city?.let { name ->

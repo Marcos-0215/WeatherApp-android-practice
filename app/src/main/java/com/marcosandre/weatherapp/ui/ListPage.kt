@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -81,6 +83,13 @@ fun CityItem(
         if (weather == Weather.LOADING) "Carregando clima..."
         else weather.desc
 
+    val monitorIcon =
+        if (city.isMonitored)
+            Icons.Filled.Notifications
+        else
+            Icons.Outlined.Notifications
+
+
     Row(
         modifier = modifier.fillMaxWidth().padding(8.dp).clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
@@ -115,6 +124,15 @@ fun CityItem(
                 fontSize = 16.sp)
 
         }
+
+        // Ícone de monitoramento (APENAS VISUAL)
+        Icon(
+            imageVector = monitorIcon,
+            contentDescription = "Monitorada?",
+            modifier = Modifier
+                .size(22.dp)
+                .padding(end = 8.dp)
+        )
 
         // Botão X para remover item
         IconButton(onClick = onClose) {

@@ -61,6 +61,11 @@ class MainViewModel(
         set(tmp) { _page.value = tmp }
 
 
+    val cityMap: Map<String, City>
+        get() = _cities.toMap()
+
+
+
     init {
         // Muito importante: ViewModel agora escuta o Firebase
         db.setListener(this)
@@ -182,6 +187,11 @@ class MainViewModel(
             }
         }
     }
+
+    fun update(city: City) {
+        db.update(city.toFBCity())
+    }
+
 
 }
 

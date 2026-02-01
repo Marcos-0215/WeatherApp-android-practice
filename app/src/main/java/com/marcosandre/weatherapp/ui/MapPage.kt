@@ -57,7 +57,7 @@ fun MapPage(modifier: Modifier = Modifier,
             properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
             uiSettings = MapUiSettings(myLocationButtonEnabled = true)
         ) {
-
+/*
         Marker (
             state = MarkerState(position = recife),
             title = "Recife",
@@ -78,7 +78,7 @@ fun MapPage(modifier: Modifier = Modifier,
             snippet = "Marcador em João Pessoa",
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
         )
-
+*/
         viewModel.cities.forEach {
             if (it.location != null) {
                 // Dispara (ou reutiliza cache) do clima + bitmap
