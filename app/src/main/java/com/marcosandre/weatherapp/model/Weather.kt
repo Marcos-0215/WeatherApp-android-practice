@@ -17,5 +17,14 @@ data class Weather(
             imgUrl = "LOADING",
             bitmap = null
         )
+
+        // Prática 12
+        val ERROR = Weather(
+            date = "ERROR",
+            desc = "ERROR",
+            temp = -999.0,
+            imgUrl = "ERROR",
+            bitmap = null
+        )
     }
 }

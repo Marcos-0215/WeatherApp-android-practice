@@ -24,6 +24,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.util.Consumer
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -96,6 +97,11 @@ class MainActivity : ComponentActivity() {
                 )
             )
 
+            val user = viewModel.user
+                .collectAsStateWithLifecycle(null)
+                .value
+
+
             DisposableEffect(Unit) {
 
                 val listener = Consumer<Intent> { intent ->
@@ -150,9 +156,9 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         TopAppBar(
                             title = {
-                                val name = viewModel.user?.name?:"[carregando...]"
+                                val name = user?.name ?: "[carregando...]"
                                 Text("Bem-vindo(a)! $name")
-                                    },
+                            },
 
                             actions = {
 
@@ -164,7 +170,7 @@ class MainActivity : ComponentActivity() {
                                     Icon(
                                         imageVector =
                                             Icons.AutoMirrored.Filled.ExitToApp,
-                                        contentDescription = "Localized description"
+                                        contentDescription = "Sair"
                                     )
                                 }
                             }

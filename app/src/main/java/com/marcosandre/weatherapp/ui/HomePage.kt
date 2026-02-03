@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -27,6 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.room.util.TableInfo
 import coil.compose.AsyncImage
 import com.marcosandre.weatherapp.R
 import com.marcosandre.weatherapp.viewmodel.MainViewModel
@@ -47,7 +50,7 @@ fun HomePage(
     )
      */
 
-    Column {
+    TableInfo.Column {
 
         if (viewModel.city == null) {
 
@@ -61,7 +64,7 @@ fun HomePage(
                     text = "Selecione uma cidade!",
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    modifier = Modifier.align(CenterHorizontally),
                     textAlign = TextAlign.Center,
                     fontSize = 28.sp
                 )
@@ -69,12 +72,32 @@ fun HomePage(
 
         } else {
 
-            val city = viewModel.city?.let { viewModel.cityMap[it] }
+            val cities = viewModel.cities
+                .collectAsStateWithLifecycle(emptyMap())
+                .value
 
-            val icon = if (city?.isMonitored == true)
-                Icons.Filled.Notifications
-            else
-                Icons.Outlined.Notifications
+            val city = cities[viewModel.city!!]
+
+            val weather = viewModel.weather
+                .collectAsStateWithLifecycle(emptyMap())
+                .value[viewModel.city!!]
+
+
+            val icon =
+                if (city?.isMonitored == true)
+                    Icons.Filled.Notifications
+                else
+                    Icons.Outlined.Notifications
+
+
+            val forecasts = viewModel.forecast
+                .collectAsStateWithLifecycle(emptyMap())
+                .value[viewModel.city!!]
+
+
+            LaunchedEffect(viewModel.city!!) {
+                viewModel.loadForecast(viewModel.city!!)
+            }
 
 
             // Cidade selecionada
@@ -142,10 +165,9 @@ fun HomePage(
             }
 
             // Lista de previsão
-            viewModel.forecast(viewModel.city!!)?.let { forecasts ->
-
+            forecasts?.let { list ->
                 LazyColumn {
-                    items(items = forecasts) { forecast ->
+                    items(list) { forecast ->
                         ForecastItem(
                             forecast = forecast,
                             onClick = { }
