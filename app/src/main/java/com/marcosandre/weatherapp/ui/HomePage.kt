@@ -50,7 +50,7 @@ fun HomePage(
     )
      */
 
-    TableInfo.Column {
+    Column {
 
         if (viewModel.city == null) {
 
@@ -71,6 +71,8 @@ fun HomePage(
             }
 
         } else {
+
+            val cityName = viewModel.city!!
 
             val cities = viewModel.cities
                 .collectAsStateWithLifecycle(emptyMap())
@@ -95,8 +97,9 @@ fun HomePage(
                 .value[viewModel.city!!]
 
 
-            LaunchedEffect(viewModel.city!!) {
-                viewModel.loadForecast(viewModel.city!!)
+            LaunchedEffect(cityName) {
+                viewModel.loadForecast(cityName)
+                viewModel.loadWeather(cityName)
             }
 
 
@@ -114,7 +117,7 @@ fun HomePage(
 
                 // IMAGEM DO CLIMA (AsyncImage)
                 AsyncImage(
-                    model = viewModel.weather(viewModel.city!!).imgUrl,
+                    model = weather?.imgUrl,
                     modifier = Modifier.size(140.dp),
                     error = painterResource(id = R.drawable.loading),
                     contentDescription = "Imagem do clima"
@@ -125,7 +128,7 @@ fun HomePage(
                     Spacer(modifier = Modifier.size(12.dp))
 
                     Text(
-                        text = viewModel.city ?: "Selecione uma cidade...",
+                        text = cityName,
                         fontSize = 28.sp
                     )
 
@@ -143,9 +146,9 @@ fun HomePage(
                             }
                     )
 
-                    viewModel.city?.let { name ->
+                    weather?.let { weather ->
 
-                        val weather = viewModel.weather(name)
+                        //val weather = viewModel.weather(name)
 
                         Spacer(modifier = Modifier.size(12.dp))
 

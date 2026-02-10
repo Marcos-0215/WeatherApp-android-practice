@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -79,10 +81,28 @@ fun MapPage(modifier: Modifier = Modifier,
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
         )
 */
-        viewModel.cities.forEach {
+
+
+        val cities = viewModel.cities.collectAsStateWithLifecycle(emptyMap()).value
+        val weathers = viewModel.weather.collectAsStateWithLifecycle(emptyMap()).value
+
+
+
+        cities.values.forEach {
             if (it.location != null) {
                 // Dispara (ou reutiliza cache) do clima + bitmap
-                val weather = viewModel.weather(it.name)
+                val weather =
+                    weathers[it.name] ?: Weather.LOADING
+
+                // 🔹 Carrega clima
+                LaunchedEffect(it.name) {
+                    viewModel.loadWeather(it.name)
+                }
+
+                // 🔹 Carrega bitmap quando o clima muda
+                LaunchedEffect(weather) {
+                    viewModel.loadBitmap(it.name)
+                }
 
                 // Bitmap do marcador
                 val image = weather.bitmap

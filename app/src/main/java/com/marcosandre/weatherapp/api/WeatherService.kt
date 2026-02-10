@@ -41,11 +41,13 @@ class WeatherService (private val context: Context) {
         }
 
     suspend fun getLocation(name: String): LatLng? = withContext(Dispatchers.IO) {
-        val loc = search(name)
-        if (loc != null)
-            LatLng(loc.lat, loc.lon)
-        else
-            null
+        search(name)?.let {
+            it.lat?.let { lat ->
+                it.lon?.let { lon ->
+                    LatLng(lat, lon)
+                }
+            }
+        }
     }
 
 
